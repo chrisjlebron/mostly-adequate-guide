@@ -40,18 +40,27 @@ require([
       return 'https://api.flickr.com/services/feeds/photos_public.gne?tags=' + t + '&format=json&jsoncallback=?';
     };
 
+    // var mediaUrl = _.compose(_.prop('m'), _.prop('media'));
+    //
+    // var srcs = _.compose(_.map(mediaUrl), _.prop('items'));
+    //
+    // var images = _.compose(_.map(img), srcs);
+
+    ////////////////////////////////////////////
+    // Refactor (Pure)
+    //
     var mediaUrl = _.compose(_.prop('m'), _.prop('media'));
 
-    var srcs = _.compose(_.map(mediaUrl), _.prop('items'));
+    var mediaUrlToImg = _.compose(img, mediaUrl);
 
-    var images = _.compose(_.map(img), srcs);
+    var images = _.compose(_.map(mediaUrlToImg), _.prop('items'));
 
 
     ////////////////////////////////////////////
     // Impure
     //
-    var renderImages = _.compose(Impure.setHtml("body"), images)
+    var renderImages = _.compose(Impure.setHtml('body'), images)
     var app = _.compose(Impure.getJSON(renderImages), url)
 
-    app("cats")
+    app('cats')
   });
