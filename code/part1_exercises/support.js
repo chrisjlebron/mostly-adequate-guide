@@ -3,12 +3,14 @@
 //
 //
 //
+// 'use strict';
+
 function inspect(x) {
-  return (typeof x === 'function') ? inspectFn(x) : inspectArgs(x);
+  return typeof x === 'function' ? inspectFn(x) : inspectArgs(x);
 }
 
 function inspectFn(f) {
-  return (f.name) ? f.name : f.toString();
+  return f.name ? f.name : f.toString();
 }
 
 function inspectArgs(args) {
@@ -28,7 +30,7 @@ function curry(fx) {
     else {
       var f2 = function f2() {
         var args2 = Array.prototype.slice.call(arguments, 0);
-        return f1.apply(null, args.concat(args2)); 
+        return f1.apply(null, args.concat(args2));
       }
       f2.toString = function() {
         return inspectFn(fx) + inspectArgs(args);
@@ -38,58 +40,65 @@ function curry(fx) {
   };
 }
 
-compose = function() {
-  var fns = toArray(arguments),
+function compose() {
+  var fns = [].slice.call(arguments),
       arglen = fns.length;
 
   return function(){
-    for(var i=arglen;--i>=0;) {
-      var fn = fns[i]
-        , args = fn.length ? Array.prototype.slice.call(arguments, 0, fn.length) : arguments
-        , next_args = Array.prototype.slice.call(arguments, (fn.length || 1)); //not right with *args
-      next_args.unshift(fn.apply(this,args));
+    for(var i = arglen; --i >= 0;) {
+      var fn = fns[i],
+        args = fn.length ? Array.prototype.slice.call(arguments, 0, fn.length) : arguments,
+        next_args = Array.prototype.slice.call(arguments, fn.length || 1); //not right with *args
+      next_args.unshift(fn.apply(this, args));
       arguments = next_args;
     }
     return arguments[0];
   }
 }
 
-add = curry(function(x, y) {
-    return x + y;
-});
+module.exports = {
+  inspect,
+  inspectFn,
+  inspectArgs,
+  curry,
+  compose,
+  add: curry(function(x, y) {
+      return x + y;
+  }),
 
-match = curry(function(what, x) {
-    return x.match(what);
-});
+  match: curry(function(what, x) {
+      return x.match(what);
+  }),
 
-replace = curry(function(what, replacement, x) {
-    return x.replace(what, replacement);
-});
+  replace: curry(function(what, replacement, x) {
+      return x.replace(what, replacement);
+  }),
 
-filter = curry(function(f, xs) {
-    return xs.filter(f);
-});
+  filter: curry(function(f, xs) {
+      return xs.filter(f);
+  }),
 
-map = curry(function map(f, xs) {
-    return xs.map(f);
-});
+  map: curry(function map(f, xs) {
+      return xs.map(f);
+  }),
 
-reduce = curry(function(f, a, xs) {
-    return xs.reduce(f, a);
-});
+  reduce: curry(function(f, a, xs) {
+      return xs.reduce(f, a);
+  }),
 
-split = curry(function(what, x) {
-    return x.split(what);
-});
+  split: curry(function(what, x) {
+      return x.split(what);
+  }),
 
-join = curry(function(what, x) {
-    return x.join(what);
-});
+  join: curry(function(what, x) {
+      return x.join(what);
+  }),
 
-toUpperCase = function(x) {
-    return x.toUpperCase()
-};
+  toUpperCase: function(x) {
+      return x.toUpperCase()
+  },
 
-toLowerCase = function(x) {
-    return x.toLowerCase()
+  toLowerCase: function(x) {
+      return x.toLowerCase()
+  }
 };

@@ -1,7 +1,7 @@
 var E = require('./compose_exercises');
 var assert = require("chai").assert;
 
-describe("Compose Exercises", function(){  
+describe('Compose Exercises', function(){
   var CARS = E.CARS
 
   it('Exercise 1', function(){
@@ -9,7 +9,7 @@ describe("Compose Exercises", function(){
   });
 
   it('Exercise 2', function(){
-    assert.equal(E.nameOfFirstCar(CARS), "Ferrari FF");
+    assert.equal(E.nameOfFirstCar(CARS), 'Ferrari FF');
   });
 
   it('Exercise 3', function(){
