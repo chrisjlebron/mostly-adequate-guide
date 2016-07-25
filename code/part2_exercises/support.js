@@ -1,18 +1,23 @@
-require('../part1_exercises/support');
+var support = require('../part1_exercises/support');
+var inspect = support.inspect;
+var toUpperCase = support.toUpperCase;
+var join = support.join;
 var _ = require('ramda');
 var Task = require('data.task');
 var curry = _.curry;
 
+// overwriting inspect from pt 1
 inspect = function(x) {
   return (x && x.inspect) ? x.inspect() : x;
 };
 
+// overwriting toUpperCase from pt 1
 toUpperCase = function(x) {
   return x.toUpperCase();
 };
 
 // Identity
-Identity = function(x) {
+var Identity = function(x) {
   this.__value = x;
 };
 
@@ -23,11 +28,11 @@ Identity.prototype.map = function(f) {
 };
 
 Identity.prototype.inspect = function() {
-  return 'Identity('+inspect(this.__value)+')';
+  return 'Identity(' + inspect(this.__value) + ')';
 };
 
 // Maybe
-Maybe = function(x) {
+var Maybe = function(x) {
   this.__value = x;
 };
 
@@ -56,17 +61,12 @@ Maybe.prototype.join = function() {
 }
 
 Maybe.prototype.inspect = function() {
-  return 'Maybe('+inspect(this.__value)+')';
+  return 'Maybe(' + inspect(this.__value) + ')';
 }
 
 
 // Either
-Either = function() {};
-Either.of = function(x) {
-  return new Right(x);
-}
-
-Left = function(x) {
+var Left = function(x) {
   this.__value = x;
 }
 
@@ -80,11 +80,11 @@ Left.prototype.ap = function(other) { return this; }
 Left.prototype.join = function() { return this; }
 Left.prototype.chain = function() { return this; }
 Left.prototype.inspect = function() {
-  return 'Left('+inspect(this.__value)+')';
+  return 'Left(' + inspect(this.__value) + ')';
 }
 
 
-Right = function(x) {
+var Right = function(x) {
   this.__value = x;
 }
 
@@ -120,11 +120,17 @@ Right.prototype.chain = function(f) {
 }
 
 Right.prototype.inspect = function() {
-  return 'Right('+inspect(this.__value)+')';
+  return 'Right(' + inspect(this.__value) + ')';
 }
 
+var Either = function() {};
+Either.of = function(x) {
+  return new Right(x);
+}
+
+
 // IO
-IO = function(f) {
+var IO = function(f) {
   this.unsafePerformIO = f;
 }
 
@@ -153,32 +159,50 @@ IO.prototype.ap = function(a) {
 }
 
 IO.prototype.inspect = function() {
-  return 'IO('+inspect(this.unsafePerformIO)+')';
+  return 'IO(' + inspect(this.unsafePerformIO) + ')';
 }
 
-unsafePerformIO = function(x) { return x.unsafePerformIO(); }
+var unsafePerformIO = function(x) { return x.unsafePerformIO(); }
 
-either = curry(function(f, g, e) {
+var either = curry(function(f, g, e) {
   switch(e.constructor) {
     case Left: return f(e.__value);
     case Right: return g(e.__value);
+    default: return e.__value;
   }
 });
 
 // overwriting join from pt 1
 join = function(m){ return m.join(); };
 
-chain = curry(function(f, m){
+var chain = curry(function(f, m){
   return m.map(f).join(); // or compose(join, map(f))(m)
 });
 
-liftA2 = curry(function(f, a1, a2){
+var liftA2 = curry(function(f, a1, a2){
   return a1.map(f).ap(a2);
 });
 
-liftA3 = curry(function(f, a1, a2, a3){
+var liftA3 = curry(function(f, a1, a2, a3){
   return a1.map(f).ap(a2).ap(a3);
 });
 
 
 Task.prototype.join = function(){ return this.chain(_.identity); }
+
+module.exports = {
+  inspect,
+  toUpperCase,
+  Identity,
+  Maybe,
+  Left,
+  Right,
+  Either,
+  IO,
+  unsafePerformIO,
+  either,
+  join,
+  chain,
+  liftA2,
+  liftA3
+};

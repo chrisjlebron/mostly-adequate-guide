@@ -1,4 +1,10 @@
-require('../../support');
+var s = require('../../support');
+var Identity = s.Identity;
+var Maybe = s.Maybe;
+var Right = s.Right;
+var Left = s.Left;
+var IO = s.IO;
+var either = s.either;
 var Task = require('data.task');
 var _ = require('ramda');
 
@@ -24,7 +30,7 @@ var ex2 = undefined;
 // Use safeProp and _.head to find the first initial of the user
 var safeProp = _.curry(function (x, o) { return Maybe.of(o[x]); });
 
-var user = { id: 2, name: "Albert" };
+var user = { id: 2, name: 'Albert' };
 
 var ex3 = undefined;
 
@@ -63,7 +69,7 @@ var ex5 = undefined;
 // ==========
 // Write a function that uses checkActive() and showWelcome() to grant access or return the error
 
-var showWelcome = _.compose(_.concat( "Welcome "), _.prop('name'));
+var showWelcome = _.compose(_.concat( 'Welcome '), _.prop('name'));
 
 var checkActive = function(user) {
  return user.active ? Right.of(user) : Left.of('Your account is not active')
@@ -75,7 +81,8 @@ var ex6 = undefined;
 
 // Exercise 7
 // ==========
-// Write a validation function that checks for a length > 3. It should return Right(x) if it is greater than 3 and Left("You need > 3") otherwise
+// Write a validation function that checks for a length > 3.
+// It should return Right(x) if it is greater than 3 and Left('You need > 3') otherwise
 
 var ex7 = function(x) {
   return undefined; // <--- write me. (don't be pointfree)
@@ -85,15 +92,16 @@ var ex7 = function(x) {
 
 // Exercise 8
 // ==========
-// Use ex7 above and either as a functor to save the user if they are valid or return the error message string. Remember either's two arguments must return the same type.
+// Use ex7 above and either as a functor to save the user if they are valid
+// or return the error message string. Remember either's two arguments must return the same type.
 
 var save = function(x) {
   return new IO(function() {
-    console.log("SAVED USER!");
+    console.log('SAVED USER!');
     return x + '-saved';
   });
 };
 
 var ex8 = undefined;
 
-module.exports = {ex1: ex1, ex2: ex2, ex3: ex3, ex4: ex4, ex5: ex5, ex6: ex6, ex7: ex7, ex8: ex8};
+module.exports = { ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8};

@@ -1,8 +1,12 @@
-require('../../support');
+var s = require('../../support');
+var Identity = s.Identity;
+var Maybe = s.Maybe;
+var Left = s.Left;
+var Right = s.Right;
 var E = require('./functor_exercises');
-var assert = require("chai").assert;
+var assert = require('chai').assert;
 
-describe("Functor Exercises", function(){
+describe('Functor Exercises', function(){
 
   it('Exercise 1', function(){
     assert.deepEqual(E.ex1(Identity.of(2)), Identity.of(3));
@@ -14,12 +18,12 @@ describe("Functor Exercises", function(){
   });
 
   it('Exercise 3', function(){
-    var user = { id: 2, name: "Albert" };
+    var user = { id: 2, name: 'Albert' };
     assert.deepEqual(E.ex3(user), Maybe.of('A'));
   });
 
   it('Exercise 4', function(){
-    assert.deepEqual(E.ex4("4"), Maybe.of(4));
+    assert.deepEqual(E.ex4('4'), Maybe.of(4));
   });
 
   it('Exercise 5', function(done){
@@ -35,12 +39,12 @@ describe("Functor Exercises", function(){
   });
 
   it('Exercise 7', function(){
-    assert.deepEqual(E.ex7("fpguy99"), Right.of("fpguy99"));
-    assert.deepEqual(E.ex7("..."), Left.of("You need > 3"));
+    assert.deepEqual(E.ex7('fpguy99'), Right.of('fpguy99'));
+    assert.deepEqual(E.ex7('...'), Left.of('You need > 3'));
   });
 
   it('Exercise 8', function(){
-    assert.deepEqual(E.ex8("fpguy99").unsafePerformIO(), "fpguy99-saved");
-    assert.deepEqual(E.ex8("...").unsafePerformIO(), "You need > 3");
+    assert.deepEqual(E.ex8('fpguy99').unsafePerformIO(), 'fpguy99-saved');
+    assert.deepEqual(E.ex8('...').unsafePerformIO(), 'You need > 3');
   });
 });
