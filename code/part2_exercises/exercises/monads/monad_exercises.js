@@ -1,6 +1,17 @@
-require('../../support');
+var s = require('../../support');
+var Maybe = s.Maybe;
+var IO = s.IO;
+var Right = s.Right;
+var Left = s.Left;
+var join = s.join;
+var inspect = s.inspect;
 var Task = require('data.task');
 var _ = require('ramda');
+
+// curried functor mapping function
+var map = _.curry(function(f, m) {
+  return m.map(f)
+});
 
 // Exercise 1
 // ==========
@@ -9,7 +20,7 @@ var _ = require('ramda');
 var safeProp = _.curry(function (x, o) { return Maybe.of(o[x]); });
 var user = {
   id: 2,
-  name: "albert",
+  name: 'albert',
   address: {
     street: {
       number: 22,
@@ -18,7 +29,11 @@ var user = {
   }
 };
 
-var ex1 = undefined;
+var ex1 = _.compose(
+  join, map(safeProp('name')),
+  join, map(safeProp('street')),
+  safeProp('address')
+);
 
 
 // Exercise 2
@@ -36,7 +51,13 @@ var pureLog = function(x) {
   });
 }
 
-var ex2 = undefined;
+var ex2 = _.compose(
+  join,
+  map(pureLog),
+  map(_.last),
+  map(_.split('/')),
+  getFile
+);
 
 
 
@@ -55,12 +76,25 @@ var getPost = function(i) {
 var getComments = function(i) {
   return new Task(function (rej, res) {
     setTimeout(function () {
-      res([{post_id: i, body: "This book should be illegal"}, {post_id: i, body:"Monads are like smelly shallots"}]);
+      res([{post_id: i, body: 'This book should be illegal'}, {post_id: i, body: 'Monads are like smelly shallots'}]);
     }, 300);
   });
 }
 
-var ex3 = undefined;
+var ex3 = _.compose(
+  join,
+  map(getComments),
+  map(_.prop('id')),
+  getPost
+);
+
+
+
+/**
+ * WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP
+ */
+
+
 
 
 // Exercise 4
@@ -91,7 +125,15 @@ var validateEmail = function(x){
 }
 
 //  ex4 :: Email -> Either String (IO String)
-var ex4 = undefined;
+var ex4 = _.compose(
+  // console.log, inspect,
+  join,
+  map(emailBlast),
+  join,
+  map(addToMailingList),
+  // join,
+  validateEmail
+);
 
 
-module.exports = {ex1: ex1, ex2: ex2, ex3: ex3, ex4: ex4, user: user}
+module.exports = {ex1, ex2, ex3, ex4, user}

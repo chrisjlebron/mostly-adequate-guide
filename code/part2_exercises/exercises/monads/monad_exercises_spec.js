@@ -1,4 +1,7 @@
-require('../../support');
+var s = require('../../support');
+var Maybe = s.Maybe;
+var either = s.either;
+var unsafePerformIO = s.unsafePerformIO;
 var E = require('./monad_exercises');
 var assert = require("chai").assert
 var _ = require('ramda');
