@@ -3,6 +3,7 @@ var Maybe = s.Maybe;
 var IO = s.IO;
 var Right = s.Right;
 var Left = s.Left;
+var chain = s.chain;
 var join = s.join;
 var inspect = s.inspect;
 var Task = require('data.task');
@@ -29,9 +30,23 @@ var user = {
   }
 };
 
+/**
+ * Using join & map
+ */
+
+// var ex1 = _.compose(
+//   join, map(safeProp('name')),
+//   join, map(safeProp('street')),
+//   safeProp('address')
+// );
+
+/**
+ * Chain version
+ */
+
 var ex1 = _.compose(
-  join, map(safeProp('name')),
-  join, map(safeProp('street')),
+  chain(safeProp('name')),
+  chain(safeProp('street')),
   safeProp('address')
 );
 
@@ -51,11 +66,41 @@ var pureLog = function(x) {
   });
 }
 
+/**
+ * Join & Map
+ */
+
+// var ex2 = _.compose(
+//   join,
+//   map(pureLog),
+//   map(_.last),
+//   map(_.split('/')),
+//   getFile
+// );
+
+/**
+ * Chain
+ */
+
+// var ex2 = _.compose(
+//   chain(pureLog),
+//   map(_.last),
+//   map(_.split('/')),
+//   getFile
+// );
+
+/**
+ * Refactored
+ */
+
 var ex2 = _.compose(
-  join,
-  map(pureLog),
-  map(_.last),
-  map(_.split('/')),
+  chain(
+    _.compose(
+      pureLog,
+      _.last,
+      _.split('/')
+    )
+  ),
   getFile
 );
 
@@ -81,10 +126,36 @@ var getComments = function(i) {
   });
 }
 
+/**
+ * Join & Map
+ */
+
+// var ex3 = _.compose(
+//   join,
+//   map(getComments),
+//   map(_.prop('id')),
+//   getPost
+// );
+
+/**
+ * Chain
+ */
+
+// var ex3 = _.compose(
+//   chain(getComments),
+//   map(_.prop('id')),
+//   getPost
+// );
+
+/**
+ * Refactored
+ */
+
 var ex3 = _.compose(
-  join,
-  map(getComments),
-  map(_.prop('id')),
+  chain(_.compose(
+    getComments,
+    _.prop('id')
+  )),
   getPost
 );
 
@@ -126,12 +197,8 @@ var validateEmail = function(x){
 
 //  ex4 :: Email -> Either String (IO String)
 var ex4 = _.compose(
-  // console.log, inspect,
-  join,
-  map(emailBlast),
-  join,
-  map(addToMailingList),
-  // join,
+  // chain is "necessary" here to remove nesting of IO's
+  map(_.compose(chain(emailBlast), addToMailingList)),
   validateEmail
 );
 
